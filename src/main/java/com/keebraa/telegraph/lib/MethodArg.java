@@ -6,11 +6,21 @@ package com.keebraa.telegraph.lib;
  * @author vvasianovych
  *
  */
-public class CallArg {
+public class MethodArg {
 
     private String type;
 
+    private String name;
+
     private Object value;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getType() {
         return type;

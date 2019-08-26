@@ -16,7 +16,7 @@ public class MethodCall {
 
     private String methodName;
 
-    private List<CallArg> args;
+    private List<MethodArg> args;
 
     public String getHostName() {
         return hostName;
@@ -42,11 +42,11 @@ public class MethodCall {
         this.methodName = methodName;
     }
 
-    public List<CallArg> getArgs() {
+    public List<MethodArg> getArgs() {
         return args;
     }
 
-    public void setArgs(List<CallArg> args) {
+    public void setArgs(List<MethodArg> args) {
         this.args = args;
     }
 }

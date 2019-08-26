@@ -11,7 +11,9 @@
     <spring.version>5.1.9.RELEASE</spring.version>
     <slf4j.version>1.7.28</slf4j.version>
     <spring.boot.version>2.1.7.RELEASE</spring.boot.version>
+    <jackson.version>2.9.9.3</jackson.version>
     <commons.version>3.9</commons.version>
+    <junit.version>4.12</junit.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
@@ -35,6 +37,20 @@
       <version>${commons.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/junit/junit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -42,6 +58,5 @@
       <version>${spring.boot.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 </project>
