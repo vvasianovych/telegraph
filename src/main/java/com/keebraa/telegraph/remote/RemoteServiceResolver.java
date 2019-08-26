@@ -19,8 +19,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keebraa.telegraph.lib.MicroserviceDescriptor;
@@ -85,6 +89,7 @@ public class RemoteServiceResolver {
         executor.execute(() -> {
             try {
                 serverSocket = new ServerSocket(localPort);
+                log.info("Start listening for a multicast responses. Port: {}", localPort);
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
                     executor.execute(() -> handleClientSocket(clientSocket));

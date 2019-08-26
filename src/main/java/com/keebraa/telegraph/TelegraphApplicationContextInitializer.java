@@ -44,8 +44,8 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
     private static final String TELEGRAPH_PORT_PARAM = "telegraph.communication.port";
 
     private static final String DEFAULT_MULTICAST_ADDRESS = "233.0.0.0";
-    private static final Integer DEFAULT_TELEGRAPH_PORT = 99992;
-    private static final Integer DEFAULT_MULTICAST_PORT = 99991;
+    private static final Integer DEFAULT_TELEGRAPH_PORT = 9992;
+    private static final Integer DEFAULT_MULTICAST_PORT = 9991;
 
     private static Logger log = LoggerFactory.getLogger("Telegraph");
 
@@ -104,7 +104,7 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
         Integer localPort = applicationContext.getEnvironment().getProperty(TELEGRAPH_PORT_PARAM, Integer.class, DEFAULT_TELEGRAPH_PORT);
         RemoteServiceResolver remoteServiceResolver = new RemoteServiceResolver(multicastAddress, multicastPort, localHost, localPort, objectMapper);
         applicationContext.getBeanFactory().registerSingleton(remoteServiceResolver.getClass().getName(), remoteServiceResolver);
-
+        remoteServiceResolver.handleResponses();
         log.info("Remote Service Registry is initialized. Multicast address: {}, port: {}, Local address: {}, local port: {}", multicastAddress, multicastPort,
                 localHost, localPort);
 

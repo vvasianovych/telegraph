@@ -1,22 +1,22 @@
 package com.keebraa.telegraph.test;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 
 public class MainSender {
 
     protected static byte[] buf = new byte[256];
 
     public static void main(String[] args) throws IOException {
-        DatagramSocket socket = new DatagramSocket();
-        InetAddress group = InetAddress.getByName("230.0.0.0");
-        buf = "Hello world".getBytes();
+        Socket socket = new Socket("192.168.1.27", 9992);
  
-        DatagramPacket packet 
-          = new DatagramPacket(buf, buf.length, group, 4446);
-        socket.send(packet);
+        DataOutputStream stream = new DataOutputStream(socket.getOutputStream());
+        stream.writeUTF("{\"name\":\"testMS\", \"host\":\"192.168.1.10\", \"port\":9993, \"pubKey\": null, \"ttl\": 0, \"serviceDescriptors\" : []}");
+        stream.close();
         socket.close();
     }
 }
