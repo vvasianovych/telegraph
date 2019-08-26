@@ -1,7 +1,13 @@
 package com.keebraa.telegraph;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
+import static java.net.InetAddress.getLocalHost;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -19,6 +25,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keebraa.telegraph.annotations.RemoteService;
 import com.keebraa.telegraph.remote.ProxyMethodInvokationHandler;
+import com.keebraa.telegraph.remote.RemoteServiceResolver;
 import com.keebraa.telegraph.shared.SharedServicesRegistry;
 
 /**
@@ -31,16 +38,25 @@ import com.keebraa.telegraph.shared.SharedServicesRegistry;
 public class TelegraphApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     private static final String REMOTE_SERVICE_PACKAGE_PARAM = "telegraph.services.packages";
-    
+    private static final String MULTICAST_ADDRESS_PARAM = "telegraph.communication.multicastAddress";
+    private static final String MULTICAST_PORT_PARAM = "telegraph.communication.multicastPort";
+    private static final String TELEGRAPH_HOST_PARAM = "telegraph.communication.host";
+    private static final String TELEGRAPH_PORT_PARAM = "telegraph.communication.port";
+
+    private static final String DEFAULT_MULTICAST_ADDRESS = "233.0.0.0";
+    private static final Integer DEFAULT_TELEGRAPH_PORT = 99992;
+    private static final Integer DEFAULT_MULTICAST_PORT = 99991;
+
     private static Logger log = LoggerFactory.getLogger("Telegraph");
 
     private BeanNameGenerator nameGenerator = new AnnotationBeanNameGenerator();
-    
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public void initialize(ConfigurableApplicationContext applicationContext) {
 
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
+
         String remoteServicePackage = environment.getProperty(REMOTE_SERVICE_PACKAGE_PARAM);
 
         ClassPathScanningCandidateComponentProvider interfaceProvider = createRemoteInterfaceComponentScanner();
@@ -69,17 +85,36 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
                     remoteInterfaceClass.getCanonicalName(), serviceName, msName);
         }
 
+        try {
+            registerRequiredServices(applicationContext);
+        } catch (UnknownHostException e) {
+            log.error("Telegraph can't start. ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void registerRequiredServices(ConfigurableApplicationContext applicationContext) throws UnknownHostException {
         SharedServicesRegistry registry = new SharedServicesRegistry();
         applicationContext.getBeanFactory().registerSingleton(registry.getClass().getName(), registry);
         log.info("Shared services registry is initialized.");
+
+        String multicastAddress = applicationContext.getEnvironment().getProperty(MULTICAST_ADDRESS_PARAM, DEFAULT_MULTICAST_ADDRESS);
+        Integer multicastPort = applicationContext.getEnvironment().getProperty(MULTICAST_PORT_PARAM, Integer.class, DEFAULT_MULTICAST_PORT);
+        String localHost = applicationContext.getEnvironment().getProperty(TELEGRAPH_HOST_PARAM);
+        Integer localPort = applicationContext.getEnvironment().getProperty(TELEGRAPH_PORT_PARAM, Integer.class, DEFAULT_TELEGRAPH_PORT);
+        RemoteServiceResolver remoteServiceResolver = new RemoteServiceResolver(multicastAddress, multicastPort, localHost, localPort, objectMapper);
+        applicationContext.getBeanFactory().registerSingleton(remoteServiceResolver.getClass().getName(), remoteServiceResolver);
+
+        log.info("Remote Service Registry is initialized. Multicast address: {}, port: {}, Local address: {}, local port: {}", multicastAddress, multicastPort,
+                localHost, localPort);
+
     }
 
     private Class<?> getRemoteServiceClass(String className) {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

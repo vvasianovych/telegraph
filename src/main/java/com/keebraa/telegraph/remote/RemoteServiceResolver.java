@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -58,7 +59,9 @@ public class RemoteServiceResolver {
     private ServerSocket serverSocket;
 
     public RemoteServiceResolver(String multicastAddress, int port, String localAddress, int localPort, ObjectMapper mapper) {
-        // TODO: add validation
+        validate(multicastAddress, "multicastAddress");
+        validate(localAddress, "localAddress");
+
         this.multicastAddress = multicastAddress;
         this.port = port;
         this.objectMapper = mapper;
@@ -148,6 +151,13 @@ public class RemoteServiceResolver {
         socket.close();
 
         return descriptors.get(microserviceName);
+    }
+
+    private void validate(String value, String valueName) {
+        if (isBlank(value)) {
+            log.error("Value '{}' can't be empty", valueName);
+            throw new RuntimeException(String.format("Value %s can't be empty", valueName));
+        }
     }
 
     private MulticastMicroserviceDescriptorRequest buildRequest(String microserviceName) {
