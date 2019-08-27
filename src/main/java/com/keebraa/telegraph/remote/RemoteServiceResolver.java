@@ -14,6 +14,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -90,6 +91,8 @@ public class RemoteServiceResolver {
                     Socket clientSocket = serverSocket.accept();
                     executor.execute(() -> handleClientSocket(clientSocket));
                 }
+            } catch (SocketException exception) {
+                log.error("Multicast response socket was closed Resolved is stopped.");
             } catch (Exception exception) {
                 log.error("Server socket handling exception.", exception);
             }
