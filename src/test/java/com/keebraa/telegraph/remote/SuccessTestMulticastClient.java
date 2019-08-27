@@ -47,16 +47,19 @@ public class SuccessTestMulticastClient {
     private ObjectMapper objectMapper;
 
     private long timeout;
+    
+    private long ttl;
 
     public SuccessTestMulticastClient(String microserviceName, String microserviceHost, int microservicePort, String multicastAddress, int port,
-            String responseAddress, int responsePort, ObjectMapper objectMapper) throws IOException {
+            String responseAddress, int responsePort, long ttl, ObjectMapper objectMapper) throws IOException {
 
         this.microserviceName = microserviceName;
         this.responseAddress = responseAddress;
         this.responsePort = responsePort;
         this.microserviceHost = microserviceHost;
         this.microservicePort = microservicePort;
-
+        this.ttl = ttl;
+        
         this.objectMapper = objectMapper;
 
         socket = new MulticastSocket(port);
@@ -93,6 +96,7 @@ public class SuccessTestMulticastClient {
     }
 
     public void stop() throws IOException {
+        readThread.interrupt();
         socket.leaveGroup(group);
         socket.close();
     }
@@ -101,6 +105,7 @@ public class SuccessTestMulticastClient {
         MicroserviceDescriptor descriptor = new MicroserviceDescriptor();
         descriptor.setName(microserviceName);
         descriptor.setHost(microserviceHost);
+        descriptor.setTtl(ttl);
         descriptor.setPort(microservicePort);
         return objectMapper.writeValueAsString(descriptor);
     }

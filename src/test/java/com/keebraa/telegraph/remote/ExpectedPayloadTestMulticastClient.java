@@ -18,7 +18,7 @@ public class ExpectedPayloadTestMulticastClient extends SuccessTestMulticastClie
 
     public ExpectedPayloadTestMulticastClient(String microserviceName, String microserviceHost, int microservicePort, String multicastAddress, int port,
             String responseAddress, int responsePort, ObjectMapper objectMapper) throws IOException {
-        super(microserviceName, microserviceHost, microservicePort, multicastAddress, port, responseAddress, responsePort, objectMapper);
+        super(microserviceName, microserviceHost, microservicePort, multicastAddress, port, responseAddress, responsePort, 10000, objectMapper);
     }
 
     public void setExpectedPayload(String payload) {

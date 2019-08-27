@@ -3,6 +3,7 @@ package com.keebraa.telegraph.remote;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static java.util.Arrays.asList;
+import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -15,16 +16,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keebraa.telegraph.lib.MicroserviceDescriptor;
@@ -154,7 +150,7 @@ public class RemoteServiceResolver {
         DatagramPacket packet = new DatagramPacket(payloadBytes, payloadBytes.length, group, port);
         socket.send(packet);
         socket.close();
-
+        descriptors.remove(microserviceName);
         return descriptors.get(microserviceName);
     }
 
@@ -170,8 +166,8 @@ public class RemoteServiceResolver {
         request.setMicroservices(asList(microserviceName));
         request.setRequesterHost(localAddress);
         request.setRequesterPort(localPort);
-        request.setTimestamp(Instant.now().toEpochMilli());
-        request.setRequestId(UUID.randomUUID().toString());
+        request.setTimestamp(now().toEpochMilli());
+        request.setRequestId(randomUUID().toString());
         return request;
     }
 }
