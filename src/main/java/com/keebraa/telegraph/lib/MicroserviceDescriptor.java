@@ -25,6 +25,19 @@ public class MicroserviceDescriptor {
 
     private List<SharedServiceDescriptor> serviceDescriptors = new ArrayList<>();
 
+    /**
+     * Represents id of multicast request, that this descriptor will be sent for.
+     */
+    private String requestId;
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
     public List<SharedServiceDescriptor> getServiceDescriptors() {
         return serviceDescriptors;
     }

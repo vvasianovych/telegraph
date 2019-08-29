@@ -118,7 +118,8 @@ public class RemoteServiceResolver {
             inputStream.close();
             clientSocket.close();
         } catch (IOException exception) {
-            log.error("Multicast response can't be processed.", exception);
+            log.error("Multicast response can't be processed.");
+            log.debug("exception details:", exception);
         }
     }
 

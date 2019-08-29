@@ -47,7 +47,7 @@ public class SuccessTestMulticastClient {
     private ObjectMapper objectMapper;
 
     private long timeout;
-    
+
     private long ttl;
 
     public SuccessTestMulticastClient(String microserviceName, String microserviceHost, int microservicePort, String multicastAddress, int port,
@@ -59,7 +59,7 @@ public class SuccessTestMulticastClient {
         this.microserviceHost = microserviceHost;
         this.microservicePort = microservicePort;
         this.ttl = ttl;
-        
+
         this.objectMapper = objectMapper;
 
         socket = new MulticastSocket(port);
@@ -86,7 +86,7 @@ public class SuccessTestMulticastClient {
                 Thread.sleep(timeout);
                 Socket responseSocket = new Socket(responseAddress, responsePort);
                 DataOutputStream stream = new DataOutputStream(responseSocket.getOutputStream());
-                stream.writeUTF(buildResponse());
+                stream.writeUTF(buildResponse(request.getRequestId()));
                 responseSocket.close();
             } catch (IOException | InterruptedException e) {
                 log.error("exception", e);
@@ -101,12 +101,13 @@ public class SuccessTestMulticastClient {
         socket.close();
     }
 
-    public String buildResponse() throws JsonProcessingException {
+    public String buildResponse(String requestId) throws JsonProcessingException {
         MicroserviceDescriptor descriptor = new MicroserviceDescriptor();
         descriptor.setName(microserviceName);
         descriptor.setHost(microserviceHost);
         descriptor.setTtl(ttl);
         descriptor.setPort(microservicePort);
+        descriptor.setRequestId(requestId);
         return objectMapper.writeValueAsString(descriptor);
     }
 }

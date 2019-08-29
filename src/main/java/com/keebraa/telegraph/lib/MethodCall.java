@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class MethodCall {
 
-    private String hostName;
+    private String microserviceName;
 
     private String serviceName;
 
@@ -18,12 +18,12 @@ public class MethodCall {
 
     private List<MethodArg> args;
 
-    public String getHostName() {
-        return hostName;
+    public String getMicroserviceName() {
+        return microserviceName;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setMicroserviceName(String microserviceName) {
+        this.microserviceName = microserviceName;
     }
 
     public String getServiceName() {

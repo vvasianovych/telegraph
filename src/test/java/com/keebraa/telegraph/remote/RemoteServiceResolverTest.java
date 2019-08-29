@@ -2,6 +2,7 @@ package com.keebraa.telegraph.remote;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
@@ -12,6 +13,25 @@ import com.keebraa.telegraph.lib.MicroserviceDescriptor;
 
 public class RemoteServiceResolverTest {
 
+    @Test
+    public void test_invalidResponseCase() throws IOException, InterruptedException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExpectedPayloadTestMulticastClient client = new ExpectedPayloadTestMulticastClient("testMS", "localhost", 8877, "233.0.0.0", 9999, "localhost", 4444, 10000, mapper);
+        // Set the invalid payload (corrupted text)
+        client.setExpectedPayload("\"name\": \"blabla");
+        client.run();
+
+        RemoteServiceResolver resolver = new RemoteServiceResolver("233.0.0.0", 9999, "localhost", 4444, mapper);
+        resolver.handleResponses();
+        MicroserviceDescriptor resolvedDescriptor = resolver.resolveService("testMS");
+
+        assertNull(resolvedDescriptor);
+
+        client.stop();
+        resolver.stop();
+    }
+    
     @Test
     public void test_normalCase() throws IOException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
@@ -27,6 +47,28 @@ public class RemoteServiceResolverTest {
         assertEquals("localhost", resolvedDescriptor.getHost());
         assertEquals(8877, resolvedDescriptor.getPort());
 
+        client.stop();
+        resolver.stop();
+    }
+    
+    @Test
+    public void test_absentMicroserviceCase() throws IOException, InterruptedException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        SuccessTestMulticastClient client = new SuccessTestMulticastClient("testAnotherMS", "localhost", 8877, "233.0.0.0", 9999, "localhost", 4444, 10000, mapper);
+        client.run();
+
+        RemoteServiceResolver resolver = new RemoteServiceResolver("233.0.0.0", 9999, "localhost", 4444, mapper);
+        resolver.handleResponses();
+        MicroserviceDescriptor resolvedDescriptor = resolver.resolveService("testMS");
+
+        assertNull(resolvedDescriptor);
+        client.run();
+        resolvedDescriptor = resolver.resolveService("testAnotherMS");
+        assertNotNull(resolvedDescriptor);
+        assertEquals("localhost", resolvedDescriptor.getHost());
+        assertEquals(8877, resolvedDescriptor.getPort());
+        
         client.stop();
         resolver.stop();
     }

@@ -1,11 +1,18 @@
 package com.keebraa.telegraph.lib;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Contains low-level data about remote service call.
  * 
  * @author vvasianovych
  *
  */
+@JsonInclude(NON_NULL)
 public class MethodCallResult {
     
     private MethodCall call;
@@ -16,7 +23,7 @@ public class MethodCallResult {
 
     private CallStatus status;
 
-    private Throwable exception;
+    private Map<String, Object> exceptionDetails;
 
     public MethodCall getCall() {
         return call;
@@ -50,11 +57,11 @@ public class MethodCallResult {
         this.status = status;
     }
 
-    public Throwable getException() {
-        return exception;
+    public Map<String, Object> getExceptionDetails() {
+        return exceptionDetails;
     }
 
-    public void setException(Throwable exception) {
-        this.exception = exception;
+    public void setExceptionDetails(Map<String, Object> exception) {
+        this.exceptionDetails = exception;
     }
 }

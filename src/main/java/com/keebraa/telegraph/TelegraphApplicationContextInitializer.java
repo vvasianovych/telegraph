@@ -24,7 +24,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keebraa.telegraph.annotations.RemoteService;
-import com.keebraa.telegraph.remote.ProxyMethodInvokationHandler;
+import com.keebraa.telegraph.remote.ProxyMethodInvocationHandler;
 import com.keebraa.telegraph.remote.RemoteServiceResolver;
 import com.keebraa.telegraph.shared.SharedServicesRegistry;
 
@@ -64,7 +64,7 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
             log.info("Found remote service: {}", beanDef.getBeanClassName());
 
             Class<?> remoteInterfaceClass = getRemoteServiceClass(beanDef.getBeanClassName());
-            ProxyMethodInvokationHandler handler = new ProxyMethodInvokationHandler(remoteInterfaceClass, objectMapper, "", "", 1000);
+            ProxyMethodInvocationHandler handler = new ProxyMethodInvocationHandler(remoteInterfaceClass, objectMapper, "", "", 1000);
             Object remoteService = newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { remoteInterfaceClass }, handler);
 
             RemoteService remoteServiceAnnotation = remoteInterfaceClass.getAnnotation(RemoteService.class);

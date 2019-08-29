@@ -17,15 +17,15 @@ public class ExpectedPayloadTestMulticastClient extends SuccessTestMulticastClie
     private String payload;
 
     public ExpectedPayloadTestMulticastClient(String microserviceName, String microserviceHost, int microservicePort, String multicastAddress, int port,
-            String responseAddress, int responsePort, ObjectMapper objectMapper) throws IOException {
-        super(microserviceName, microserviceHost, microservicePort, multicastAddress, port, responseAddress, responsePort, 10000, objectMapper);
+            String responseAddress, int responsePort, long responseDelay, ObjectMapper objectMapper) throws IOException {
+        super(microserviceName, microserviceHost, microservicePort, multicastAddress, port, responseAddress, responsePort, responseDelay, objectMapper);
     }
 
     public void setExpectedPayload(String payload) {
         this.payload = payload;
     }
 
-    public String buildResponse() throws JsonProcessingException {
+    public String buildResponse(String requestId) throws JsonProcessingException {
         return payload;
     }
 }
