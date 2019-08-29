@@ -62,12 +62,12 @@ public class ProxyMethodInvocationHandler implements InvocationHandler {
     private long delay;
 
     public ProxyMethodInvocationHandler(Class<?> remoteInterface, ObjectMapper objectMapper, RemoteServiceResolver resolver,
-            RemoteSocketRegistry socketRegistry, int attemptsCount, long delay) {
+            RemoteSocketRegistry socketRegistry, int attemptsCount, long msResolvingDelay) {
         this.remoteInterface = remoteInterface;
         this.socketRegistry = socketRegistry;
         this.resolver = resolver;
         this.attempts = attemptsCount;
-        this.delay = delay;
+        this.delay = msResolvingDelay;
         this.mapper = objectMapper;
     }
 
