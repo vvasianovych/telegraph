@@ -23,7 +23,6 @@ import com.keebraa.telegraph.annotations.RemoteService;
 import com.keebraa.telegraph.remote.ProxyMethodInvocationHandler;
 import com.keebraa.telegraph.remote.RemoteServiceResolver;
 import com.keebraa.telegraph.remote.RemoteSocketRegistry;
-import com.keebraa.telegraph.shared.SharedServicesRegistry;
 
 /**
  * Listener for application context, that adds all remote interfaces found in
@@ -67,7 +66,6 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
         try {
             remoteSocketRegistry = registerRemoteSocketRegistry();
             remoteServiceResolver = registerRemoteServiceResolver(applicationContext);
-            registerSharedServicesRegistry(applicationContext);
         } catch (UnknownHostException e) {
             log.error("Telegraph can't start. ", e);
             throw new RuntimeException(e);
@@ -89,6 +87,7 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
             if (applicationContext instanceof BeanDefinitionRegistry) {
                 serviceName = nameGenerator.generateBeanName(beanDef, (BeanDefinitionRegistry) applicationContext);
             }
+
             if (!remoteServiceAnnotation.serviceName().trim().equals("")) {
                 serviceName = remoteServiceAnnotation.serviceName();
             }
@@ -118,13 +117,6 @@ public class TelegraphApplicationContextInitializer implements ApplicationContex
         RemoteSocketRegistry remoteSocketRegistry = new RemoteSocketRegistry();
         log.info("Remote Socket Registry is initialized.");
         return remoteSocketRegistry;
-    }
-
-    public SharedServicesRegistry registerSharedServicesRegistry(ConfigurableApplicationContext applicationContext) throws UnknownHostException {
-        SharedServicesRegistry registry = new SharedServicesRegistry();
-        applicationContext.getBeanFactory().registerSingleton(registry.getClass().getName(), registry);
-        log.info("Shared services registry is initialized.");
-        return registry;
     }
 
     private Class<?> getRemoteServiceClass(String className) {

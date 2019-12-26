@@ -1,1 +1,3 @@
 org.springframework.context.ApplicationContextInitializer=com.keebraa.telegraph.TelegraphApplicationContextInitializer
+org.springframework.context.ApplicationContextAware=com.keebraa.telegraph.TelegraphApplicationContextAware
+org.springframework.context.ApplicationListener=com.keebraa.telegraph.TelegraphApplicationListener

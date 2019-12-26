@@ -59,12 +59,12 @@ public class RemoteServiceResolver {
 
     private ServerSocket serverSocket;
 
-    public RemoteServiceResolver(String multicastAddress, int port, String localAddress, int localPort, ObjectMapper mapper) {
+    public RemoteServiceResolver(String multicastAddress, int multicastPort, String localAddress, int localPort, ObjectMapper mapper) {
         validate(multicastAddress, "multicastAddress");
         validate(localAddress, "localAddress");
 
         this.multicastAddress = multicastAddress;
-        this.port = port;
+        this.port = multicastPort;
         this.objectMapper = mapper;
         this.localAddress = localAddress;
         this.localPort = localPort;
@@ -135,7 +135,7 @@ public class RemoteServiceResolver {
         long now = Instant.now().toEpochMilli();
         MicroserviceDescriptor descriptor = null;
 
-        // Note that we should call 'contains', because out descriptors map will wait
+        // Note that we should call 'contains', because our descriptors map will wait
         // for value in case of 'get'
         if (descriptors.containsKey(microserviceName)) {
             descriptor = descriptors.get(microserviceName);
